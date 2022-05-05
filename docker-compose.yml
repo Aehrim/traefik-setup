@@ -1,0 +1,84 @@
+version: "3.3"
+services:
+  traefik:
+    image: "traefik:latest"
+    container_name: traefik
+    hostname: traefik
+    command:
+      - --log.level=debug  
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # - --entrypoints.ssh.address=:22
+      - --providers.docker
+      # Prometheus Monitoring
+      - --metrics.prometheus=true
+      - --metrics.prometheus.buckets=0.1,0.3,1.2,5.0
+      - --metrics.prometheus.addEntryPointsLabels=true
+      - --metrics.prometheus.addrouterslabels=true
+      - --metrics.prometheus.addServicesLabels=true
+      - --entryPoints.metrics.address=:8082
+      - --metrics.prometheus.entryPoint=metrics
+      # Api (.insecure für test umgebung) und Acme
+      - --api
+      - --certificatesresolvers.letsencrypt.acme.storage=/srv/traefik/acme.json
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+      # File Provider
+      - --providers.file.directory=/srv/traefik/dynamic_config/
+      - --providers.file.watch=true
+      #Logs
+      - --accesslog=true
+      - --accesslog.filepath=/srv/traefik/logs/proxylog.log
+      - --accesslog.bufferingsize=100
+      #Tracing
+      # - --tracing=true
+      # - --tracing.serviceName=traefik
+      # - --tracing.spanNameLimit=150
+    environment:
+      - CLOUDFLARE_EMAIL=prodownhiler77@gmail.com
+      - CLOUDFLARE_DNS_API_TOKEN=9SgrvqNQZAHxdS2M4H1sNM_HOi-7-9tc5-lz-6NB
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/srv/traefik/acme.json:/srv/traefik/acme.json"
+      - "./dynamic_config/traefik.yaml:/srv/traefik/dynamic_config/traefik.yaml"
+    labels:
+      - "traefik.enable=true"
+      # Dashboard and authentication
+      - "traefik.http.routers.traefik.rule=Host(`traefik.gitrev.de`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.tls=true"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.middlewares=authtraefik"
+      - "traefik.http.middlewares.authtraefik.basicauth.users=Artoria:$$apr1$$0a81n459$$nTRBfyWQjUaHWZujOmf3x/"
+      # global redirect to https
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      # middleware redirect
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+    networks:
+      - traefik
+  whoami:
+    image: containous/whoami:v1.3.0
+    hostname: whoami
+    container_name: whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.whoami.rule=Host(`gitrev.de`)"
+      - "traefik.http.routers.whoami.middlewares=apiauth"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls=true"
+      - "traefik.http.routers.whoami.tls.certresolver=letsencrypt"
+      - "traefik.http.middlewares.apiauth.basicauth.users=Artoria:$$apr1$$0a81n459$$nTRBfyWQjUaHWZujOmf3x/"
+    networks:
+      - traefik   
+networks:
+  traefik:
+    external: true
+    
