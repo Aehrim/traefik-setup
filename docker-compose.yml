@@ -1,14 +1,14 @@
-version: "3.3"
+version: '3.3'
 services:
   traefik:
     image: "traefik:latest"
     container_name: traefik
     hostname: traefik
     command:
-      - --log.level=debug  
+#      - --log.level=debug
+      - --pilot.token=44db9523-0b40-4928-a7ec-18c11eeb4b77  
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
-      # - --entrypoints.ssh.address=:22
       - --providers.docker
       # Prometheus Monitoring
       - --metrics.prometheus=true
@@ -31,10 +31,6 @@ services:
       - --accesslog=true
       - --accesslog.filepath=/srv/traefik/logs/proxylog.log
       - --accesslog.bufferingsize=100
-      #Tracing
-      # - --tracing=true
-      # - --tracing.serviceName=traefik
-      # - --tracing.spanNameLimit=150
     environment:
       - CLOUDFLARE_EMAIL=prodownhiler77@gmail.com
       - CLOUDFLARE_DNS_API_TOKEN=9SgrvqNQZAHxdS2M4H1sNM_HOi-7-9tc5-lz-6NB
