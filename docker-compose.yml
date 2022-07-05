@@ -18,7 +18,7 @@ services:
       - --metrics.prometheus.addServicesLabels=true
       - --entryPoints.metrics.address=:8082
       - --metrics.prometheus.entryPoint=metrics
-      # Api (.insecure für test umgebung) und Acme
+      # Api (.insecure for dev realm) und Acme
       - --api
       - --certificatesresolvers.letsencrypt.acme.storage=/srv/traefik/acme.json
       - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
@@ -59,6 +59,7 @@ services:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
     networks:
       - traefik
+  
   whoami:
     image: containous/whoami:v1.3.0
     hostname: whoami
@@ -73,7 +74,8 @@ services:
       - "traefik.http.routers.whoami.tls.certresolver=letsencrypt"
       - "traefik.http.middlewares.apiauth.basicauth.users=Artoria:$$apr1$$0a81n459$$nTRBfyWQjUaHWZujOmf3x/"
     networks:
-      - traefik   
+      - traefik
+   
 networks:
   traefik:
     external: true
