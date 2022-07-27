@@ -1,7 +1,7 @@
 Creating a Traefik Stack is Easy
 
 Pull the Repo from my Git
--------------------------
+
 ## The Following must be changed 
 
       - CLOUDFLARE_EMAIL=Email from Cloudflare 
