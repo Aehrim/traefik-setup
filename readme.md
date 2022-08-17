@@ -11,7 +11,7 @@ Pull the Repo from my Git
       - "traefik.http.middlewares.authtraefik.basicauth.users=Artoria:$$apr1$$0a81n459$$nTRBfyWQjUaHWZujOmf3x/" password is encrypted with htpasswd use only if needed 
 
 ---------------
-Do the Same in the WhoamI Container except the cloudflare data 
+Do the Same in the WhoamI Container except the cloudflare labels
 
 Dont for get to create a Network for Traefik and define it in the compose file 
 
@@ -19,7 +19,7 @@ And then it Should be a Simple
 
 docker-compose up -d 
 
-und Traefik should be Reachable on your Domain
+and Traefik should be Reachable on your Domain
 
 
 
