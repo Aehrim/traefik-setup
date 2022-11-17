@@ -34,7 +34,7 @@ services:
       - --accesslog.bufferingsize=100
     environment:
       - CLOUDFLARE_EMAIL=prodownhiler77@gmail.com
-      - CLOUDFLARE_DNS_API_TOKEN=9SgrvqNQZAHxdS2M4H1sNM_HOi-7-9tc5-lz-6NB
+      - CLOUDFLARE_DNS_API_TOKEN="Your API Token"
     ports:
       - "80:80"
       - "443:443"
