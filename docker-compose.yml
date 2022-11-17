@@ -51,7 +51,7 @@ services:
       - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.middlewares=authtraefik"
-      - "traefik.http.middlewares.authtraefik.basicauth.users=Artoria:$$apr1$$0a81n459$$nTRBfyWQjUaHWZujOmf3x/"
+      - "traefik.http.middlewares.authtraefik.basicauth.users="Username":"HTTPD Encoded Pass""
       # global redirect to https
       - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
       - "traefik.http.routers.http-catchall.entrypoints=web"
