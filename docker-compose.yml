@@ -73,23 +73,9 @@ services:
       - "traefik.http.routers.whoami.entrypoints=websecure"
       - "traefik.http.routers.whoami.tls=true"
       - "traefik.http.routers.whoami.tls.certresolver=letsencrypt"
-      - "traefik.http.middlewares.apiauth.basicauth.users=Artoria:$$apr1$$0a81n459$$nTRBfyWQjUaHWZujOmf3x/"
+      - "traefik.http.middlewares.authtraefik.basicauth.users="Username":"HTTPD Encoded Pass""
     networks:
       - traefik
-  # hub-agent:
-  #   image: ghcr.io/traefik/hub-agent-traefik:v0.7.0
-  #   container_name: hub-agent
-  #   restart: "on-failure"
-  #   command:
-  #     - run
-  #     - --hub.token=f7740327-dc4a-42b6-8f37-7eaada1a70b8
-  #     - --auth-server.advertise-url=https://hub.gitrev.de
-  #     - --traefik.host=traefik
-  #     - --traefik.tls.insecure=true
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   depends_on:
-  #     - traefik
 networks:
   traefik:
     external: true
